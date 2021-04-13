@@ -64,13 +64,7 @@ client.connect(err => {
   app.post('/addADoctor', (req, res) => {
     const {name, email} =  req.body;
     const file = req.files.file;
-    const filePath = `${__dirname}/doctors/${file.name}`;
-    
-    file.mv(filePath, (err)=> {
-      res.status(500).send({msg: 'Failed To Upload Image'})
-    })
-
-    const newImg = fs.readFileSync(filePath);
+    const newImg = file.data;
     const encImg = newImg.toString('base64');
     const image = {
       contentType: file.mimetype,
@@ -80,7 +74,7 @@ client.connect(err => {
 
     doctorsCollection.insertOne({name, email, image})
       .then(result => {
-        fs.remove(filePath)
+        console.log(result.insertedCount)
       })
   })
 
